@@ -5,11 +5,17 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Stack from 'react-bootstrap/Stack';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios';
 
 const Login = () => {
   const navigate  = useNavigate();
   const gotoJoin = () => {
     navigate("/join");
+  }
+  const login = () => {
+    axios.get('http://localhost:3000/')
+      .then(res => console.log(res))
+      .catch()
   }
 
   return (
@@ -26,7 +32,7 @@ const Login = () => {
         </Form.Group>
 
         <Stack direction="horizontal" gap={3}>
-          <Button variant="primary" type="submit">
+          <Button variant="primary" type="submit" onClick={login}>
             로그인
           </Button>
           <Button variant="primary" type="submit" onClick={gotoJoin}>
