@@ -1,6 +1,7 @@
 const http = require('http');
 const mysql = require('mysql');
 const url = require('url');
+const cors = require('cors');
 
 const hostname = '127.0.0.1';
 const port = 3000;
@@ -21,8 +22,6 @@ const server = http.createServer((req, res) => {
     var pathname = parsedUrl.pathname;
     var qeuryString = parsedUrl.query;
 
-    console.log(pathname, qeuryString);
-
     if (pathname === '/login') {
 
         const params = [];
@@ -35,7 +34,11 @@ const server = http.createServer((req, res) => {
             console.log('User info is: ', rows);
 
             res.statusCode = 200;
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
+            res.setHeader('Access-Control-Max-Age', 2592000); // 30 days
             res.setHeader('Content-Type', 'text/plain');
+
             var result = JSON.stringify(rows);
 
             res.end(result);
@@ -44,21 +47,32 @@ const server = http.createServer((req, res) => {
 
     else if (pathname === '/join') {
 
-        connection.query('SELECT * from user', (error, rows, fields) => {
+        const params = [];
+        params.push(qeuryString.email);
+        params.push(qeuryString.name);
+        params.push(qeuryString.password);
+
+        connection.query('INSERT INTO user (email, name, password) VALUES (?, ?, ?)', params, (error, rows, fields) => {
             if (error) throw error;
 
             console.log('User info is: ', rows);
 
             res.statusCode = 200;
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
+            res.setHeader('Access-Control-Max-Age', 2592000); // 30 days
             res.setHeader('Content-Type', 'text/plain');
-            var result = 'rows : ' + JSON.stringify(rows) + '<br><br>' +
-                            'fields : ' + JSON.stringify(fields);
+            var result = JSON.stringify(rows);
+
             res.end(result);
         });
     }
 
     else {
         res.statusCode = 200;
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
+        res.setHeader('Access-Control-Max-Age', 2592000); // 30 days
         res.setHeader('Content-Type', 'text/plain');
         res.end('Hello World');
     }
@@ -66,6 +80,7 @@ const server = http.createServer((req, res) => {
     connection.end();
 });
 
+
 server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+    console.log(`Server running at http://${hostname}:${port}/`);
 });
